@@ -30,12 +30,8 @@
 }
 
 .bookmark-controls img {
-    margin-right: 15px;
     width: 14px;
     height: 14px;
-    background-color: white;
-    cursor: pointer;
-    filter: invert(100%);
 }
 
 .bookmark-controls {
