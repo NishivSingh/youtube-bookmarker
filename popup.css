@@ -24,3 +24,21 @@
     padding-bottom: 7px;
     margin-bottom: 7px;
 }
+
+.bookmark-title {
+    padding-left: 2px;
+}
+
+.bookmark-controls img {
+    margin-right: 15px;
+    width: 14px;
+    height: 14px;
+    background-color: white;
+    cursor: pointer;
+    filter: invert(100%);
+}
+
+.bookmark-controls {
+    flex: auto;
+    text-align: right;
+}

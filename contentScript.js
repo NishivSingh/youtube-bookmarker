@@ -1,18 +1,32 @@
-(()=>{
-    let ytLeftControls,ytPlayer;
-    let currentVideo = new String();
-    chrome.runtime.onMessage.addListener((obj,sender,response) =>{
-        const {type,value,videoId} = obj;
+(() => {
+  let ytRightControls, ytPlayer;
+  let currentVideo = new String();
+  chrome.runtime.onMessage.addListener((obj, sender, response) => {
+    const { type, value, videoId } = obj;
 
-        if (type === "NEW"){
-            currentVideo = videoId;
-            newVideoLoaded();
-        }
-    });
-
-    const newVideoLoaded = () =>{
-        const bookmarkBtnExists = doxument.getElementsByClassName("bookmark-btn")[0];
-
-        console.log(bookmarkBtnExists);
+    if (type === "NEW") {
+      currentVideo = videoId;
+      newVideoLoaded();
     }
+  });
+
+  const newVideoLoaded = () => {
+    const bookmarkBtnExists =
+      document.getElementsByClassName("bookmark-btn")[0];
+
+    if (!bookmarkBtnExists) {
+      const bookmarkBtn = document.createElement("img");
+
+      bookmarkBtn.src = chrome.runtime.getURL("assets/bookmark.png");
+      bookmarkBtn.className = "ytp-button " + "bookmark-btn";
+      bookmarkBtn.title = "Click to bookmark current timestamp";
+
+      ytRightControls =
+        document.getElementsByClassName("ytp-right-controls")[0];
+      ytPlayer = document.getElementsByClassName("video-stream")[0];
+
+      ytRightControls.prepend(bookmarkBtn);
+    }
+  };
+  newVideoLoaded();
 })();
