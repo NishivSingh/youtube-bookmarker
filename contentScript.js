@@ -2,18 +2,31 @@
   let ytRightControls, ytPlayer;
   let currentVideo = new String();
   let currentVideoBookmarks = [];
+
   chrome.runtime.onMessage.addListener((obj, sender, response) => {
     const { type, value, videoId } = obj;
 
     if (type === "NEW") {
       currentVideo = videoId;
       newVideoLoaded();
+    } else if (type === "PLAY") {
+      ytPlayer.currentTime = value;
+    } else if (type === "DELETE") {
+      currentVideoBookmarks = currentVideoBookmarks.filter(
+        (b) => b.time != value
+      );
+      chrome.storage.sync.set({
+        [currentVideo]: JSON.stringify(currentVideoBookmarks),
+      });
+
+      response(currentVideoBookmarks);
     }
   });
 
   const fetchBookmarks = () => {
     return new Promise((resolve) => {
       chrome.storage.sync.get([currentVideo], (obj) => {
+        console.log("Storage data:", obj);
         resolve(obj[currentVideo] ? JSON.parse(obj[currentVideo]) : []);
       });
     });
@@ -26,7 +39,7 @@
     if (!bookmarkBtnExists) {
       const bookmarkBtn = document.createElement("img");
 
-      bookmarkBtn.src = chrome.runtime.getURL("assets/bookmark.png");
+      bookmarkBtn.src = chrome.runtime.getURL("assets/add.png");
       bookmarkBtn.className = "ytp-button " + "bookmark-btn";
       bookmarkBtn.style = "scale: 0.5;";
       bookmarkBtn.title = "Click to bookmark current timestamp";
@@ -48,6 +61,7 @@
     };
 
     currentVideoBookmarks = await fetchBookmarks();
+
     chrome.storage.sync.set({
       [currentVideo]: JSON.stringify(
         [...currentVideoBookmarks, newBookmark].sort((a, b) => a.time - b.time)
